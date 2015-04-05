@@ -10,11 +10,6 @@ public class ColourReader {
 		if (resolution < 0.0) throw new IllegalArgumentException("Resolution value may not be lower than 0.0");
 		if (resolution > 1.0) throw new IllegalArgumentException("Resolution value may not exceed 1.0");
 
-		// TODO:
-		// given scan resolution (0.0f to 1.0f), get rgb for each pixel
-		// accumulate rgb values, divide by number of readings (average colour)
-		// return HSBColour instance of averaged values
-
 		int xStep = image.getWidth() / (int)(image.getWidth() * resolution);
 		int yStep = image.getHeight() / (int)(image.getHeight() * resolution);
 

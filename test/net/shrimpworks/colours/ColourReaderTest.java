@@ -17,12 +17,25 @@ public class ColourReaderTest {
 		return image;
 	}
 
+	private BufferedImage halfHalfImage(int w, int h, Color color1, Color color2) {
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+		Graphics2D graphics = image.createGraphics();
+
+		graphics.setColor(color1);
+		graphics.fillRect(0, 0, w / 2, h);
+
+		graphics.setColor(color2);
+		graphics.fillRect(w / 2, 0, w, h);
+
+		return image;
+	}
+
 	@Test
 	public void testBadInput() {
 		BufferedImage black = solidImage(20, 20, Color.BLACK);
 
 		try {
-			ColourReader.averageColour(black, 0.4f);
+			ColourReader.averageColour(black, -0.1f);
 			fail("Expected IllegalArgumentException");
 		} catch (IllegalArgumentException expected) {
 			// expected
@@ -60,5 +73,13 @@ public class ColourReaderTest {
 		assertEquals(240, hsb.hue() * 360, 0.0);
 		assertEquals(1, hsb.brightness(), 0.0);
 		assertEquals(1, hsb.saturation(), 0.0);
+	}
+
+	@Test
+	public void moreAverageTest() {
+		BufferedImage grey = halfHalfImage(20, 20, Color.BLACK, Color.WHITE);
+		HSBColour hsb = ColourReader.averageColour(grey, 1f);
+		assertNotNull(hsb);
+		assertEquals(0.5, hsb.brightness(), 0.1);
 	}
 }
