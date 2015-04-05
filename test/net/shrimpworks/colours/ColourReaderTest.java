@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -78,16 +79,16 @@ public class ColourReaderTest {
 	@Test
 	public void colourVolumeTest() {
 		BufferedImage grey = ImageUtils.solidImage(20, 20, Color.GRAY);
-		List<ColourVolume> colours = ColourReader.colourVolumes(grey, 1f);
+		SortedSet<ColourVolume> colours = ColourReader.colourVolumes(grey, 1f);
 		assertNotNull(colours);
 		assertEquals(1, colours.size());
-		assertEquals(Color.GRAY, colours.get(0).colour());
+		assertEquals(Color.GRAY, colours.stream().findFirst().get().colour());
 
 		BufferedImage red = ImageUtils.solidImage(20, 20, Color.RED);
 		colours = ColourReader.colourVolumes(red, 1f);
 		assertNotNull(colours);
 		assertEquals(1, colours.size());
-		assertEquals(Color.RED, colours.get(0).colour());
+		assertEquals(Color.RED, colours.stream().findFirst().get().colour());
 
 		List<Color> expected = Arrays.asList(Color.BLACK, Color.WHITE);
 		BufferedImage blackAndWhite = ImageUtils.halfHalfImage(20, 20, Color.BLACK, Color.WHITE);

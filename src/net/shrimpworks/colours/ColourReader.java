@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ColourReader {
@@ -26,7 +29,7 @@ public class ColourReader {
 											totalRGB[2] / samples.size(), null));
 	}
 
-	public static List<ColourVolume> colourVolumes(BufferedImage image, float resolution) {
+	public static SortedSet<ColourVolume> colourVolumes(BufferedImage image, float resolution) {
 		final List<Integer> samples = readImage(image, resolution);
 
 		final List<Hue> hues = new ArrayList<>();
@@ -63,7 +66,7 @@ public class ColourReader {
 
 		return colorList.entrySet().stream()
 						.map(e -> new ColourVolume(e.getKey(), ((float)e.getValue().size() / (float)samples.size())))
-						.collect(Collectors.toList());
+						.collect(Collectors.toCollection(TreeSet::new));
 	}
 
 	private static List<Integer> readImage(BufferedImage image, float resolution) {
