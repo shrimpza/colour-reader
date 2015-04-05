@@ -85,11 +85,11 @@ public class ColourReaderTest {
 		BufferedImage yellow = halfHalfImage(20, 20, Color.RED, Color.GREEN);
 		hsb = ColourReader.averageColour(yellow, 0.5f);
 		assertNotNull(hsb);
-		assertEquals(60, hsb.hue()*360, 10);
+		assertEquals(60, hsb.hue() * 360, 10);
 
 		BufferedImage pink = halfHalfImage(20, 20, Color.RED, Color.BLUE);
 		hsb = ColourReader.averageColour(pink, 0.5f);
 		assertNotNull(hsb);
-		assertEquals(300, hsb.hue()*360, 10);
+		assertEquals(300, hsb.hue() * 360, 10);
 	}
 }
