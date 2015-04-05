@@ -7,7 +7,7 @@ public class ColourReader {
 
 	public static HSBColour averageColour(BufferedImage image, float resolution) {
 
-		if (resolution < 0.5) throw new IllegalArgumentException("Resolution value may not be lower than 0.5");
+		if (resolution < 0.0) throw new IllegalArgumentException("Resolution value may not be lower than 0.0");
 		if (resolution > 1.0) throw new IllegalArgumentException("Resolution value may not exceed 1.0");
 
 		// TODO:
@@ -15,8 +15,8 @@ public class ColourReader {
 		// accumulate rgb values, divide by number of readings (average colour)
 		// return HSBColour instance of averaged values
 
-		int xStep = (int)(image.getWidth() * resolution);
-		int yStep = (int)(image.getHeight() * resolution);
+		int xStep = image.getWidth() / (int)(image.getWidth() * resolution);
+		int yStep = image.getHeight() / (int)(image.getHeight() * resolution);
 
 		int samples = 0;
 		int[] totalRGB = new int[] { 0, 0, 0 };
