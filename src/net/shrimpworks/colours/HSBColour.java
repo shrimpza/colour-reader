@@ -31,4 +31,10 @@ public class HSBColour {
 	public float[] hsb() {
 		return new float[] { hue, saturation, brightness };
 	}
+
+	@Override
+	public String toString() {
+		return String.format("HSBColour [hue=%f, saturation=%f, brightness=%f]",
+							 hue, saturation, brightness);
+	}
 }
