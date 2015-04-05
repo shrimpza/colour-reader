@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="image-colours" default="dist" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <!-- for a runnable jar file, add the main class name -->
+    <property name="main.class" value=""/>
+
+    <!-- basic paths --> 
+    <property name="src.dir" location="src"/>
+    <property name="test.dir" location="test"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="dist.dir" location="dist"/>
+    <property name="build.dir" location="build"/>
+
+    <!-- properties for build output, nothing should need to change beyond this point -->
+    <property name="build.src.dir" location="${build.dir}/src"/>
+    <property name="build.test.dir" location="${build.dir}/test"/>
+    <property name="build.javadoc.dir" location="${build.dir}/docs"/>
+
+    <path id="default.classpath">
+        <fileset dir="${lib.dir}" includes="default/*.jar"/>
+        <pathelement path="${build.src.dir}"/>
+    </path>
+
+    <path id="test.classpath">
+        <fileset dir="${lib.dir}" includes="test/*.jar"/>
+        <pathelement path="${build.test.dir}"/>
+    </path>
+
+    <path id="dist.classpath">
+        <fileset dir="${dist.dir}" includes="lib/*.jar"/>
+    </path>
+
+    <target name="init">
+        <mkdir dir="${build.src.dir}"/>
+        <mkdir dir="${build.test.dir}"/>
+    </target>
+  
+    <!-- Ivy configuration -->
+    <property name="ivy.install.version" value="2.3.0" />
+    <condition property="ivy.home" value="${env.IVY_HOME}">
+        <isset property="env.IVY_HOME" />
+    </condition>
+    <property name="ivy.home" value="${user.home}/.ant" />
+    <property name="ivy.jar.dir" value="${ivy.home}/lib" />
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+    <property name="ivy.lib.dir" value="${lib.dir}" />    
+
+    <!-- Ivy download -->
+    <target name="download-ivy" unless="offline">
+        <mkdir dir="${ivy.jar.dir}"/>
+        <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
+             dest="${ivy.jar.file}" usetimestamp="true"/>
+    </target>
+
+    <!-- Ivy initialisation -->
+    <target name="init-ivy" depends="download-ivy">
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
+
+    <!-- Ivy dependency resolution -->
+    <target name="ivy-resolve" depends="init-ivy" description="retrieve dependencies with ivy">
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" />
+    </target>
+
+    <!-- Simple source build -->
+    <target name="build" depends="init,ivy-resolve" description="compile source">
+        <javac srcdir="${src.dir}" destdir="${build.src.dir}" includeantruntime="false">
+            <classpath refid="default.classpath"/>
+        </javac>
+    </target>
+
+    <!-- Generate Javadocs -->
+    <target name="docs" depends="build">
+        <javadoc packagenames="src" sourcepath="${src.dir}" destdir="${build.javadoc.dir}">
+            <classpath refid="default.classpath"/>
+            <fileset dir="${src.dir}" includes="**/*.java"/>
+        </javadoc>
+        
+        <mkdir dir="${dist.dir}"/>
+        <jar jarfile="${dist.dir}/${ant.project.name}-javadoc.jar" basedir="${build.javadoc.dir}"/>
+    </target>
+
+    <!-- Build distribution -->
+    <target name="dist" depends="build,docs" description="generate distribution">
+        <mkdir dir="${dist.dir}/lib"/>
+
+        <copy todir="${dist.dir}/lib">
+            <fileset dir="${lib.dir}/default" includes="*.jar" erroronmissingdir="false">
+                <exclude name="**/*-javadoc.jar"/>
+                <exclude name="**/*-sources.jar"/>
+            </fileset>
+        </copy>
+
+        <manifestclasspath property="dist.manifest.classpath" jarfile="${dist.dir}/${ant.project.name}.jar">
+            <classpath refid="dist.classpath" />
+        </manifestclasspath>
+
+        <jar jarfile="${dist.dir}/${ant.project.name}.jar">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="${dist.manifest.classpath}"/>
+            </manifest>
+            <fileset dir="${build.src.dir}" />
+            <zipfileset dir="${src.dir}" excludes="**/*.java"/>
+        </jar>
+
+        <zip destfile="${dist.dir}/${ant.project.name}.zip">
+            <zipfileset dir="${dist.dir}/lib" prefix="lib"/>
+            <fileset dir="${dist.dir}" includes="${ant.project.name}.jar"/>
+        </zip>
+    </target>
+
+    <!-- Build test classes -->    
+    <target name="build-tests" depends="build" description="compile test source files">
+        <javac srcdir="${test.dir}" destdir="${build.test.dir}" includeantruntime="false" debug="on">
+            <classpath refid="default.classpath"/>
+            <classpath refid="test.classpath"/>
+        </javac>
+    </target>
+
+    <!-- Run tests -->
+    <target name="run-tests" depends="build-tests" description="run junit tests">
+        <junit printsummary="yes" fork="yes" haltonfailure="no"
+                errorproperty="tests.errors" failureproperty="tests.failures">
+            <classpath refid="default.classpath"/>
+            <classpath refid="test.classpath"/>
+
+            <formatter type="plain" usefile="false"/>
+            <batchtest>
+                <fileset dir="${test.dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <!-- Run tests, exiting with status code 1 on error, or 2 on test failure -->
+    <target name="test" depends="run-tests" description="run junit tests, and fail the build on error or failure">
+        <fail if="tests.errors" message="Error encountered while executing tests" status="1"/>
+        <fail if="tests.failures" message="Tests failed" status="2"/>
+    </target>
+    
+    <!-- Clean compiled files -->
+    <target name="clean" description="clean up" >
+        <delete dir="${build.dir}"/>
+        <delete dir="${lib.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+</project>
