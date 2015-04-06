@@ -2,11 +2,15 @@ package net.shrimpworks.colours;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.imageio.ImageIO;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -139,6 +143,21 @@ public class ColourReaderTest {
 		assertEquals(2, colours.stream().filter(c -> c.volume() == 0.25f).count());
 		assertEquals(1, colours.stream().filter(c -> c.volume() == 0.5f).count());
 		assertArrayEquals(getHSB(Color.BLUE), colours.stream().filter(c -> c.volume() == 0.5f).findFirst().get().colour().hsb(), 0.0001f);
+	}
+
+	@Ignore
+	@Test
+	public void sandbox() throws IOException {
+		BufferedImage img = ImageIO.read(new File("/tmp/image.jpg"));
+		List<ColourVolume> volumes = new ColourReader()
+				.withResolution(0.9f)
+				.withBlackThreshold(0.4f)
+				.withWhiteThreshold(0.4f)
+				.colourVolumes(img);
+
+		List<Color> colors = volumes.stream().map(v -> Color.HSBtoRGB(v.colour().hue(), v.colour().saturation(), v.colour().brightness()))
+									.map(Color::new).collect(Collectors.toList());
+		System.out.println(colors);
 	}
 
 	/**
