@@ -3,6 +3,7 @@ package net.shrimpworks.colours;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,43 @@ public class ColourReader {
 
 	private static final Hue[] HUES = new Hue[] { Hue.RED, Hue.YELLOW, Hue.GREEN, Hue.CYAN, Hue.BLUE, Hue.MAGENTA };
 
-	public static HSBColour averageColour(BufferedImage image, float resolution) {
+	private final List<Hue> hues;
+	private final float resolution;
+	private final float blackThreshold;
+	private final float whiteThreshold;
+
+	public ColourReader() {
+		this(Arrays.asList(HUES), 0.8f, 0.0f, 0.0f);
+	}
+
+	private ColourReader(List<Hue> hues, float resolution, float blackThreshold, float whiteThreshold) {
+		if (hues.isEmpty()) throw new IllegalArgumentException("Empty hues collection not allowed");
+		if (resolution < 0.0) throw new IllegalArgumentException("Resolution value may not be lower than 0.0");
+		if (resolution > 1.0) throw new IllegalArgumentException("Resolution value may not exceed 1.0");
+
+		this.hues = hues;
+		this.resolution = resolution;
+		this.blackThreshold = blackThreshold;
+		this.whiteThreshold = whiteThreshold;
+	}
+
+	public ColourReader withHues(List<Hue> hues) {
+		return new ColourReader(hues, resolution, blackThreshold, whiteThreshold);
+	}
+
+	public ColourReader withResolution(float resolution) {
+		return new ColourReader(hues, resolution, blackThreshold, whiteThreshold);
+	}
+
+	public ColourReader withBlackThreshold(float blackThreshold) {
+		return new ColourReader(hues, resolution, blackThreshold, whiteThreshold);
+	}
+
+	public ColourReader withWhiteThreshold(float whiteThreshold) {
+		return new ColourReader(hues, resolution, blackThreshold, whiteThreshold);
+	}
+
+	public HSBColour averageColour(BufferedImage image) {
 		final List<Integer> samples = readImage(image, resolution);
 
 		final int[] totalRGB = new int[] { 0, 0, 0 };
@@ -28,7 +65,7 @@ public class ColourReader {
 											totalRGB[2] / samples.size(), null));
 	}
 
-	public static List<ColourVolume> colourVolumes(BufferedImage image, float resolution) {
+	public List<ColourVolume> colourVolumes(BufferedImage image) {
 		final List<Integer> samples = readImage(image, resolution);
 
 		final Map<Color, List<HSBColour>> colorList = new HashMap<>();
@@ -37,17 +74,16 @@ public class ColourReader {
 			HSBColour hsb = new HSBColour(Color.RGBtoHSB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, (rgb) & 0xFF, null));
 			Color color = null;
 
-			// TODO provide way of specifying threshold values for black/white/grey
-
 			// handle black/white/grey separately
-			if (hsb.saturation() == 0f && hsb.brightness() == 1f) {
+			if (hsb.saturation() <= whiteThreshold && hsb.brightness() >= (1f - whiteThreshold)) {
 				color = Color.WHITE;
-			} else if (hsb.hue() == 0f && hsb.saturation() == 0f && hsb.brightness() > 0f) {
+			} else if (hsb.hue() <= blackThreshold && hsb.saturation() <= whiteThreshold
+					   && hsb.brightness() < (1f - whiteThreshold) && hsb.brightness() > blackThreshold) {
 				color = Color.GRAY;
-			} else if (hsb.brightness() == 0f) {
+			} else if (hsb.brightness() <= blackThreshold) {
 				color = Color.BLACK;
 			} else {
-				for (Hue hue : HUES) if (hue.matches(hsb)) color = hue.colors()[0];
+				for (Hue hue : hues) if (hue.matches(hsb)) color = hue.colors()[0];
 			}
 
 			if (!colorList.containsKey(color)) colorList.put(color, new ArrayList<>());
