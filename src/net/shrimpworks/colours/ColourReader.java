@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class ColourReader {
@@ -46,6 +45,8 @@ public class ColourReader {
 			HSBColour hsb = new HSBColour(Color.RGBtoHSB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, (rgb) & 0xFF, null));
 			Color color = null;
 
+			// TODO provide way of specifying threshold values for black/white/grey
+
 			// handel black/white/grey separately
 			if (hsb.saturation() == 0f && hsb.brightness() == 1f) {
 				color = Color.WHITE;
@@ -63,6 +64,8 @@ public class ColourReader {
 				colorList.get(color).add(hsb);
 			}
 		});
+
+		// TODO refactor to return list of averaged HSV colours, rather than solid colours
 
 		return colorList.entrySet().stream()
 						.map(e -> new ColourVolume(e.getKey(), ((float)e.getValue().size() / (float)samples.size())))
