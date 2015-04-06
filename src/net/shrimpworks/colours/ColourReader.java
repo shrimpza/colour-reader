@@ -3,12 +3,10 @@ package net.shrimpworks.colours;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public class ColourReader {
 
@@ -17,7 +15,7 @@ public class ColourReader {
 
 		final int[] totalRGB = new int[] { 0, 0, 0 };
 
-		samples.parallelStream().forEach(rgb -> {
+		samples.stream().forEach(rgb -> {
 			totalRGB[0] += (rgb >> 16) & 0xFF;
 			totalRGB[1] += (rgb >> 8) & 0xFF;
 			totalRGB[2] += (rgb) & 0xFF;
@@ -28,7 +26,7 @@ public class ColourReader {
 											totalRGB[2] / samples.size(), null));
 	}
 
-	public static SortedSet<ColourVolume> colourVolumes(BufferedImage image, float resolution) {
+	public static List<ColourVolume> colourVolumes(BufferedImage image, float resolution) {
 		final List<Integer> samples = readImage(image, resolution);
 
 		final List<Hue> hues = new ArrayList<>();
@@ -41,7 +39,7 @@ public class ColourReader {
 
 		final Map<Color, List<HSBColour>> colorList = new HashMap<>();
 
-		samples.parallelStream().forEach(rgb -> {
+		samples.stream().forEach(rgb -> {
 			HSBColour hsb = new HSBColour(Color.RGBtoHSB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, (rgb) & 0xFF, null));
 			Color color = null;
 
@@ -58,18 +56,28 @@ public class ColourReader {
 				for (Hue hue : hues) if (hue.matches(hsb)) color = hue.colors()[0];
 			}
 
-			// guess this eliminates any advantage parallelStream() provides :| heh
-			synchronized (colorList) {
-				if (!colorList.containsKey(color)) colorList.put(color, new ArrayList<>());
-				colorList.get(color).add(hsb);
-			}
+			if (!colorList.containsKey(color)) colorList.put(color, new ArrayList<>());
+			colorList.get(color).add(hsb);
 		});
 
-		// TODO refactor to return list of averaged HSV colours, rather than solid colours
+		List<ColourVolume> colours = new ArrayList<>();
 
-		return colorList.entrySet().stream()
-						.map(e -> new ColourVolume(e.getKey(), ((float)e.getValue().size() / (float)samples.size())))
-						.collect(Collectors.toCollection(TreeSet::new));
+		for (Map.Entry<Color, List<HSBColour>> e : colorList.entrySet()) {
+			float[] hsb = new float[3];
+			for (HSBColour c : e.getValue()) {
+				hsb[0] += c.hue();
+				hsb[1] += c.saturation();
+				hsb[2] += c.brightness();
+			}
+			colours.add(new ColourVolume(new HSBColour(hsb[0] / e.getValue().size(),
+													   hsb[1] / e.getValue().size(),
+													   hsb[2] / e.getValue().size()),
+										 ((float)e.getValue().size() / (float)samples.size())));
+		}
+
+		Collections.sort(colours);
+
+		return Collections.unmodifiableList(colours);
 	}
 
 	private static List<Integer> readImage(BufferedImage image, float resolution) {
