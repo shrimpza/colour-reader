@@ -18,7 +18,6 @@ import java.util.Map;
  */
 public class ColourReader {
 
-	private static final Hue[] HUES = new Hue[] { Hue.RED, Hue.YELLOW, Hue.GREEN, Hue.CYAN, Hue.BLUE, Hue.MAGENTA };
 
 	private final Collection<Hue> hues;
 	private final float resolution;
@@ -29,7 +28,7 @@ public class ColourReader {
 	 * Create a new Colour Reader with default parameters.
 	 */
 	public ColourReader() {
-		this(Arrays.asList(HUES), 0.8f, 0.0f, 0.0f);
+		this(Arrays.asList(Hue.BASE), 0.8f, 0.0f, 0.0f);
 	}
 
 	private ColourReader(Collection<Hue> hues, float resolution, float blackThreshold, float whiteThreshold) {

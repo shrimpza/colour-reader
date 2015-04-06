@@ -150,9 +150,10 @@ public class ColourReaderTest {
 	public void sandbox() throws IOException {
 		BufferedImage img = ImageIO.read(new File("/tmp/image.jpg"));
 		List<ColourVolume> volumes = new ColourReader()
-				.withResolution(0.9f)
+				.withResolution(0.01f)
 				.withBlackThreshold(0.4f)
 				.withWhiteThreshold(0.4f)
+				.withHues(Arrays.asList(Hue.FINE))
 				.colourVolumes(img);
 
 		List<Color> colors = volumes.stream().map(v -> Color.HSBtoRGB(v.colour().hue(), v.colour().saturation(), v.colour().brightness()))
