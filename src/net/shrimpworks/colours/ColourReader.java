@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class ColourReader {
 
+	private static final Hue[] HUES = new Hue[] { Hue.RED, Hue.YELLOW, Hue.GREEN, Hue.CYAN, Hue.BLUE, Hue.MAGENTA };
+
 	public static HSBColour averageColour(BufferedImage image, float resolution) {
 		final List<Integer> samples = readImage(image, resolution);
 
@@ -29,14 +31,6 @@ public class ColourReader {
 	public static List<ColourVolume> colourVolumes(BufferedImage image, float resolution) {
 		final List<Integer> samples = readImage(image, resolution);
 
-		final List<Hue> hues = new ArrayList<>();
-		hues.add(Hue.RED);
-		hues.add(Hue.YELLOW);
-		hues.add(Hue.GREEN);
-		hues.add(Hue.CYAN);
-		hues.add(Hue.BLUE);
-		hues.add(Hue.MAGENTA);
-
 		final Map<Color, List<HSBColour>> colorList = new HashMap<>();
 
 		samples.stream().forEach(rgb -> {
@@ -45,7 +39,7 @@ public class ColourReader {
 
 			// TODO provide way of specifying threshold values for black/white/grey
 
-			// handel black/white/grey separately
+			// handle black/white/grey separately
 			if (hsb.saturation() == 0f && hsb.brightness() == 1f) {
 				color = Color.WHITE;
 			} else if (hsb.hue() == 0f && hsb.saturation() == 0f && hsb.brightness() > 0f) {
@@ -53,7 +47,7 @@ public class ColourReader {
 			} else if (hsb.brightness() == 0f) {
 				color = Color.BLACK;
 			} else {
-				for (Hue hue : hues) if (hue.matches(hsb)) color = hue.colors()[0];
+				for (Hue hue : HUES) if (hue.matches(hsb)) color = hue.colors()[0];
 			}
 
 			if (!colorList.containsKey(color)) colorList.put(color, new ArrayList<>());
