@@ -154,7 +154,7 @@ public class ColourReader {
 	 * @param image image to analyse
 	 * @return list of colours in image, ordered by their usage volume
 	 */
-	public List<ColourVolume> colourVolumes(BufferedImage image) {
+	public List<ColourArea> colourArea(BufferedImage image) {
 		final List<Integer> samples = readImage(image, resolution);
 
 		final Map<Color, List<HSBColour>> colorList = new HashMap<>();
@@ -182,7 +182,7 @@ public class ColourReader {
 			}
 		});
 
-		List<ColourVolume> colours = new ArrayList<>();
+		List<ColourArea> colours = new ArrayList<>();
 
 		for (Map.Entry<Color, List<HSBColour>> e : colorList.entrySet()) {
 			float[] hsb = new float[3];
@@ -191,7 +191,7 @@ public class ColourReader {
 				hsb[1] += c.saturation();
 				hsb[2] += c.brightness();
 			}
-			colours.add(new ColourVolume(new HSBColour(hsb[0] / e.getValue().size(),
+			colours.add(new ColourArea(new HSBColour(hsb[0] / e.getValue().size(),
 													   hsb[1] / e.getValue().size(),
 													   hsb[2] / e.getValue().size()),
 										 ((float)e.getValue().size() / (float)samples.size())));

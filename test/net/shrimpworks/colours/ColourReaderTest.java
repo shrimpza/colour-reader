@@ -96,20 +96,20 @@ public class ColourReaderTest {
 
 	@Test
 	public void colourVolumeTest() {
-		List<ColourVolume> colours;
+		List<ColourArea> colours;
 
 		ColourReader colourReader = new ColourReader().withResolution(1f);
 
 		// verify getting colours from a solid grey image - 100% grey expected
 		BufferedImage grey = ImageUtils.solidImage(20, 20, Color.GRAY);
-		colours = colourReader.colourVolumes(grey);
+		colours = colourReader.colourArea(grey);
 		assertNotNull(colours);
 		assertEquals(1, colours.size());
 		assertArrayEquals(getHSB(Color.GRAY), colours.stream().findFirst().get().colour().hsb(), 0.0001f);
 
 		// verify getting colour volumes from a solid red image - 100% full red expected
 		BufferedImage red = ImageUtils.solidImage(20, 20, Color.RED);
-		colours = colourReader.colourVolumes(red);
+		colours = colourReader.colourArea(red);
 		assertNotNull(colours);
 		assertEquals(1, colours.size());
 		assertArrayEquals(getHSB(Color.RED), colours.stream().findFirst().get().colour().hsb(), 0.0001f);
@@ -117,29 +117,29 @@ public class ColourReaderTest {
 		// get colour volumes from a black and white image - 50/50 split expected
 		List<HSBColour> expected = Arrays.asList(new HSBColour(getHSB(Color.BLACK)), new HSBColour(getHSB(Color.WHITE)));
 		BufferedImage blackAndWhite = ImageUtils.halfHalfImage(20, 20, Color.BLACK, Color.WHITE);
-		colours = colourReader.colourVolumes(blackAndWhite);
+		colours = colourReader.colourArea(blackAndWhite);
 		assertNotNull(colours);
 		assertEquals(2, colours.size());
-		assertTrue(expected.containsAll(colours.stream().map(ColourVolume::colour).collect(Collectors.toList())));
+		assertTrue(expected.containsAll(colours.stream().map(ColourArea::colour).collect(Collectors.toList())));
 		assertEquals(2, colours.stream().filter(c -> c.volume() == 0.5f).count());
 
 		// get colour volumes from a 4-solid-colours image, 4-way 25% split of solid colours expected
 		BufferedImage fourCols = ImageUtils.quartersImage(20, 20, Color.BLACK, Color.WHITE, Color.RED, Color.GREEN);
-		colours = colourReader.colourVolumes(fourCols);
+		colours = colourReader.colourArea(fourCols);
 		assertNotNull(colours);
 		assertEquals(4, colours.size());
 		expected = Arrays.asList(new HSBColour(getHSB(Color.BLACK)), new HSBColour(getHSB(Color.WHITE)),
 								 new HSBColour(getHSB(Color.RED)), new HSBColour(getHSB(Color.GREEN)));
-		assertTrue(expected.containsAll(colours.stream().map(ColourVolume::colour).collect(Collectors.toList())));
+		assertTrue(expected.containsAll(colours.stream().map(ColourArea::colour).collect(Collectors.toList())));
 		assertEquals(4, colours.stream().filter(c -> c.volume() == 0.25f).count());
 
 		// get colour volumes from a 3-colour image where one colour is more prevalent, 50/25/25 split of solid colours expected
 		BufferedImage threeCols = ImageUtils.quartersImage(20, 20, Color.BLUE, Color.BLUE, Color.RED, Color.GREEN);
-		colours = colourReader.colourVolumes(threeCols);
+		colours = colourReader.colourArea(threeCols);
 		assertNotNull(colours);
 		assertEquals(3, colours.size());
 		expected = Arrays.asList(new HSBColour(getHSB(Color.BLUE)), new HSBColour(getHSB(Color.RED)), new HSBColour(getHSB(Color.GREEN)));
-		assertTrue(expected.containsAll(colours.stream().map(ColourVolume::colour).collect(Collectors.toList())));
+		assertTrue(expected.containsAll(colours.stream().map(ColourArea::colour).collect(Collectors.toList())));
 		assertEquals(2, colours.stream().filter(c -> c.volume() == 0.25f).count());
 		assertEquals(1, colours.stream().filter(c -> c.volume() == 0.5f).count());
 		assertArrayEquals(getHSB(Color.BLUE), colours.stream().filter(c -> c.volume() == 0.5f).findFirst().get().colour().hsb(), 0.0001f);
@@ -149,12 +149,12 @@ public class ColourReaderTest {
 	@Test
 	public void sandbox() throws IOException {
 		BufferedImage img = ImageIO.read(new File("/tmp/image.jpg"));
-		List<ColourVolume> volumes = new ColourReader()
+		List<ColourArea> volumes = new ColourReader()
 				.withResolution(0.01f)
 				.withBlackThreshold(0.4f)
 				.withWhiteThreshold(0.4f)
 				.withHues(Arrays.asList(Hue.FINE))
-				.colourVolumes(img);
+				.colourArea(img);
 
 		List<Color> colors = volumes.stream().map(v -> Color.HSBtoRGB(v.colour().hue(), v.colour().saturation(), v.colour().brightness()))
 									.map(Color::new).collect(Collectors.toList());
