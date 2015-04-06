@@ -2,6 +2,11 @@ package net.shrimpworks.colours;
 
 import java.util.Objects;
 
+/**
+ * Holds hue, saturation and brightness values, on a scale of 0.0 to 1.0.
+ * <p>
+ * To read hue as a degrees value, simply multiply it by 360.
+ */
 public class HSBColour {
 
 	private final float hue;

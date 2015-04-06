@@ -2,6 +2,10 @@ package net.shrimpworks.colours;
 
 import java.util.Objects;
 
+/**
+ * A simple object used to hold an {@link HSBColour} and the percentage
+ * volume it occupies within an image.
+ */
 public class ColourVolume implements Comparable<ColourVolume> {
 
 	private final HSBColour colour;
@@ -22,6 +26,7 @@ public class ColourVolume implements Comparable<ColourVolume> {
 
 	@Override
 	public int compareTo(ColourVolume colourVolume) {
+		// simple sorting by volume in reverse order (largest to smallest)
 		return colourVolume == null ? -1 : Float.compare(volume, colourVolume.volume) * -1;
 	}
 

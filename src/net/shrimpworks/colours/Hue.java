@@ -2,6 +2,12 @@ package net.shrimpworks.colours;
 
 import java.awt.*;
 
+/**
+ * A simple colour-matching class, which holds ranges of hues for the purpose
+ * of being able to determine simple colour ranges.
+ * <p>
+ * A reference Colour instance is also associated with the hue.
+ */
 public class Hue {
 
 	public static final Hue RED = new Hue(new int[][] { { 0, 30 }, { 330, 360 } }, Color.RED);
@@ -45,6 +51,13 @@ public class Hue {
 		return color;
 	}
 
+	/**
+	 * Determine whether the provided {@link HSBColour} instance's hue falls
+	 * within this Hue instance's range.
+	 *
+	 * @param colour colour to check for match
+	 * @return true if the colour matches
+	 */
 	public boolean matches(HSBColour colour) {
 		for (float[] r : ranges) {
 			if (colour.hue() >= r[0] && colour.hue() <= colour.hue()) return true;
