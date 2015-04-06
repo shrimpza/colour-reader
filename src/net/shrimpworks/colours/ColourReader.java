@@ -83,11 +83,14 @@ public class ColourReader {
 			} else if (hsb.brightness() <= blackThreshold) {
 				color = Color.BLACK;
 			} else {
-				for (Hue hue : hues) if (hue.matches(hsb)) color = hue.colors()[0];
+				for (Hue hue : hues) if (hue.matches(hsb)) color = hue.color();
 			}
 
-			if (!colorList.containsKey(color)) colorList.put(color, new ArrayList<>());
-			colorList.get(color).add(hsb);
+			// null check, since it's possible a hue set was provided which does not cover something
+			if (color != null) {
+				if (!colorList.containsKey(color)) colorList.put(color, new ArrayList<>());
+				colorList.get(color).add(hsb);
+			}
 		});
 
 		List<ColourVolume> colours = new ArrayList<>();
@@ -111,9 +114,6 @@ public class ColourReader {
 	}
 
 	private static List<Integer> readImage(BufferedImage image, float resolution) {
-		if (resolution < 0.0) throw new IllegalArgumentException("Resolution value may not be lower than 0.0");
-		if (resolution > 1.0) throw new IllegalArgumentException("Resolution value may not exceed 1.0");
-
 		final int xStep = image.getWidth() / (int)(image.getWidth() * resolution);
 		final int yStep = image.getHeight() / (int)(image.getHeight() * resolution);
 

@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class Hue {
 
-	public static final Hue RED = new Hue(new int[][] { { 0, 30 }, { 330, 360 } }, new Color[] { Color.RED, Color.RED });
+	public static final Hue RED = new Hue(new int[][] { { 0, 30 }, { 330, 360 } }, Color.RED);
 	public static final Hue YELLOW = new Hue(30, 90, Color.YELLOW);
 	public static final Hue GREEN = new Hue(90, 150, Color.GREEN);
 	public static final Hue CYAN = new Hue(150, 210, Color.CYAN);
@@ -12,37 +12,37 @@ public class Hue {
 	public static final Hue MAGENTA = new Hue(270, 330, Color.MAGENTA);
 
 	private final float[][] ranges;
-	private final Color[] colors;
+	private final Color color;
 
 	public Hue(float min, float max, Color color) {
-		this(new float[][] { { min, max } }, new Color[] { color });
+		this(new float[][] { { min, max } }, color);
 	}
 
 	public Hue(int min, int max, Color color) {
 		this(min / 360f, max / 360f, color);
 	}
 
-	public Hue(float[][] ranges, Color[] colors) {
+	public Hue(float[][] ranges, Color color) {
 		this.ranges = ranges;
-		this.colors = colors;
+		this.color = color;
 	}
 
-	public Hue(int[][] ranges, Color[] colors) {
+	public Hue(int[][] ranges, Color color) {
 		final float[][] floatRange = new float[ranges.length][];
 		for (int i = 0; i < ranges.length; i++) {
 			floatRange[i] = new float[] { ranges[i][0] / 360, ranges[i][0] / 360 };
 		}
 
 		this.ranges = floatRange;
-		this.colors = colors;
+		this.color = color;
 	}
 
 	public float[][] ranges() {
 		return ranges;
 	}
 
-	public Color[] colors() {
-		return colors;
+	public Color color() {
+		return color;
 	}
 
 	public boolean matches(HSBColour colour) {
