@@ -93,17 +93,17 @@ public class ColourReaderTest {
 		colours = ColourReader.colourVolumes(grey, 1f);
 		assertNotNull(colours);
 		assertEquals(1, colours.size());
-		assertArrayEquals(getHSB(Color.GRAY), colours.stream().findFirst().get().colour().hsb(), 0.001f);
+		assertArrayEquals(getHSB(Color.GRAY), colours.stream().findFirst().get().colour().hsb(), 0.0001f);
 
 		// verify getting colour volumes from a solid red image - 100% full red expected
 		BufferedImage red = ImageUtils.solidImage(20, 20, Color.RED);
 		colours = ColourReader.colourVolumes(red, 1f);
 		assertNotNull(colours);
 		assertEquals(1, colours.size());
-		assertArrayEquals(getHSB(Color.RED), colours.stream().findFirst().get().colour().hsb(), 0.001f);
+		assertArrayEquals(getHSB(Color.RED), colours.stream().findFirst().get().colour().hsb(), 0.0001f);
 
 		// get colour volumes from a black and white image - 50/50 split expected
-		List<Color> expected = Arrays.asList(Color.BLACK, Color.WHITE);
+		List<HSBColour> expected = Arrays.asList(new HSBColour(getHSB(Color.BLACK)), new HSBColour(getHSB(Color.WHITE)));
 		BufferedImage blackAndWhite = ImageUtils.halfHalfImage(20, 20, Color.BLACK, Color.WHITE);
 		colours = ColourReader.colourVolumes(blackAndWhite, 1f);
 		assertNotNull(colours);
@@ -116,7 +116,8 @@ public class ColourReaderTest {
 		colours = ColourReader.colourVolumes(fourCols, 1f);
 		assertNotNull(colours);
 		assertEquals(4, colours.size());
-		expected = Arrays.asList(Color.BLACK, Color.WHITE, Color.RED, Color.GREEN);
+		expected = Arrays.asList(new HSBColour(getHSB(Color.BLACK)), new HSBColour(getHSB(Color.WHITE)),
+								 new HSBColour(getHSB(Color.RED)), new HSBColour(getHSB(Color.GREEN)));
 		assertTrue(expected.containsAll(colours.stream().map(ColourVolume::colour).collect(Collectors.toList())));
 		assertEquals(4, colours.stream().filter(c -> c.volume() == 0.25f).count());
 
@@ -125,10 +126,11 @@ public class ColourReaderTest {
 		colours = ColourReader.colourVolumes(threeCols, 1f);
 		assertNotNull(colours);
 		assertEquals(3, colours.size());
-		expected = Arrays.asList(Color.BLUE, Color.RED, Color.GREEN);
+		expected = Arrays.asList(new HSBColour(getHSB(Color.BLUE)), new HSBColour(getHSB(Color.RED)), new HSBColour(getHSB(Color.GREEN)));
 		assertTrue(expected.containsAll(colours.stream().map(ColourVolume::colour).collect(Collectors.toList())));
 		assertEquals(2, colours.stream().filter(c -> c.volume() == 0.25f).count());
 		assertEquals(1, colours.stream().filter(c -> c.volume() == 0.5f).count());
+		assertArrayEquals(getHSB(Color.BLUE), colours.stream().filter(c -> c.volume() == 0.5f).findFirst().get().colour().hsb(), 0.0001f);
 	}
 
 	/**
