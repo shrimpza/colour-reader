@@ -17,15 +17,15 @@ brightness values of the total average colour of the input image.
 #### Example
 
 ```java
-  BufferedImage img = ImageIO.read(new File('/path/to/image.jpg'));
-  HSBColour avgCol = new ColourReader().averageColour(img);
+BufferedImage img = ImageIO.read(new File('/path/to/image.jpg'));
+HSBColour avgCol = new ColourReader().averageColour(img);
 
-  // avgColour now contains the overall average colour of the image
+// avgColour now contains the overall average colour of the image
 
-  // we can convert an HSBColour to a regular Java Colour instance:
-  Color c = new Color(Color.HSBtoRGB(avgCol.hue(), 
-                                     avgCol.saturation(), 
-                                     avgCol.brightness()));
+// we can convert an HSBColour to a regular Java Colour instance:
+Color c = new Color(Color.HSBtoRGB(avgCol.hue(), 
+                                   avgCol.saturation(), 
+                                   avgCol.brightness()));
 ```
 
 #### Sample Analysis
@@ -52,22 +52,23 @@ The hue ranges may be customised for finer results (and a larger result-set).
 #### Example
 
 ```java
-  BufferedImage img = ImageIO.read(new File("/path/to/image.png"));
-  List<ColourArea> areas = new ColourReader()
-                               .withResolution(0.5f) // sample only 50% of the image pixels
-                               .withBlackThreshold(0.2f) // consider pixels with brightness less than this to be black 
-                               .withWhiteThreshold(0.2f) // consider pixels with brightness greater than 1 minus this to be white
-                               .withHues(Arrays.asList(Hue.BASE)) // use BASE hues set
-                               .colourArea(img);
+BufferedImage img = ImageIO.read(new File("/path/to/image.png"));
+List<ColourArea> areas = new ColourReader()
+                             .withResolution(0.5f)              // sample only 50% of the image pixels
+                             .withBlackThreshold(0.2f)          // consider pixels with brightness less than this to be black 
+                             .withWhiteThreshold(0.2f)          // consider pixels with brightness greater than 1 minus this to be white
+                             .withHues(Arrays.asList(Hue.BASE)) // use BASE hues set
+                             .colourArea(img);
 
-  // note: the with... builders in the above example are not all required
-  // areas now contains colours ordered by the area they take up in the image
+// note: the with... builders in the above example are not all required
+
+// areas now contains colours ordered by the area they take up in the image
   
-  // we can get a list of Colour instances using a simple stream/map operation:
-  List<Color> colors = areas.stream().map(a -> Color.HSBtoRGB(a.colour().hue(), 
-                                                              a.colour().saturation(),
-                                                              a.colour().brightness()))
-                                     .map(Color::new).collect(Collectors.toList());
+// we can get a list of Colour instances using a simple stream/map operation:
+List<Color> colors = areas.stream().map(a -> Color.HSBtoRGB(a.colour().hue(), 
+                                                            a.colour().saturation(),
+                                                            a.colour().brightness()))
+                                   .map(Color::new).collect(Collectors.toList());
 ```
 
 #### Sample Analysis
