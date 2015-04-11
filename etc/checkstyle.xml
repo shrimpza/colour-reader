@@ -118,7 +118,9 @@
 		<module name="EmptyForIteratorPad"/>
 		<module name="GenericWhitespace"/>
 		<module name="MethodParamPad"/>
-		<module name="NoWhitespaceAfter"/>
+		<module name="WhitespaceAfter">
+			<property name="tokens" value="COMMA, SEMI"/>
+		</module>
 		<module name="NoWhitespaceBefore"/>
 		<module name="OperatorWrap"/>
 		<module name="ParenPad"/>
@@ -151,7 +153,8 @@
 		<module name="EqualsHashCode"/>
 		<module name="HiddenField">
 			<property name="ignoreConstructorParameter" value="true"/>
-			</module>
+			<property name="tokens" value="VARIABLE_DEF"/>
+		</module>
 		<module name="IllegalInstantiation"/>
 		<module name="InnerAssignment"/>
 		<module name="MagicNumber"/>
@@ -161,7 +164,7 @@
 
 		<!-- Checks for class design                         -->
 		<!-- See http://checkstyle.sf.net/config_design.html -->
-		<module name="DesignForExtension"/>
+		<!--<module name="DesignForExtension"/>-->
 		<module name="FinalClass"/>
 		<module name="HideUtilityClassConstructor"/>
 		<module name="InterfaceIsType"/>

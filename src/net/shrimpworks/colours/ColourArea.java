@@ -35,8 +35,8 @@ public class ColourArea implements Comparable<ColourArea> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		ColourArea that = (ColourArea)o;
-		return Math.abs(area - that.area) < 0.00001 &&
-			   Objects.equals(colour, that.colour);
+		return Math.abs(area - that.area) < 0.00001
+			   && Objects.equals(colour, that.colour);
 	}
 
 	@Override

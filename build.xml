@@ -159,7 +159,7 @@
     </target>
 
 
-    <target name="checkstyle" description="Run checkstyle code analysis">
+    <target name="checkstyle" depends="ivy-resolve" description="Run checkstyle code analysis">
 		<mkdir dir="${build.reports.dir}"/>
 
         <ivy:cachepath pathid="checkstyle.classpath.refid" conf="checkstyle" />
