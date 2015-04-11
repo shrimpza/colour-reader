@@ -19,73 +19,75 @@
 		<html>
 			<head>
 				<style type="text/css">
-					.bannercell {
-					border: 0px;
-					padding: 0px;
+					.header {
+						background: url(http://checkstyle.sourceforge.net/images/checkstyle_logo_small_64.png);
+						background-position: top left;
+						background-repeat: no-repeat;
+						height: 64px;
+						padding-left: 80px;
 					}
-					body {
-					margin-left: 10;
-					margin-right: 10;
-					font:normal 80% arial,helvetica,sanserif;
-					background-color:#FFFFFF;
-					color:#000000;
+					.header h1 {
+						margin: 0;
+						padding-top: 15px;
 					}
 					.a td {
-					background: #efefef;
+						background: #efefef;
 					}
 					.b td {
-					background: #fff;
+						background: #fff;
 					}
 					th, td {
-					text-align: left;
-					vertical-align: top;
+						text-align: left;
+						vertical-align: top;
 					}
 					th {
-					font-weight:bold;
-					background: #ccc;
-					color: black;
+						font-weight:bold;
+						background: #ccc;
+						color: black;
 					}
 					table, th, td {
-					font-size:100%;
-					border: none
+						font-size:100%;
+						border: none
 					}
 					table.log tr td, tr th {
 
 					}
 					h2 {
-					font-weight:bold;
-					font-size:140%;
-					margin-bottom: 5;
+						font-weight:bold;
+						font-size:140%;
+						margin-bottom: 5;
 					}
 					h3 {
-					font-size:100%;
-					font-weight:bold;
-					background: #525D76;
-					color: white;
-					text-decoration: none;
-					padding: 5px;
-					margin-right: 2px;
-					margin-left: 2px;
-					margin-bottom: 0;
+						font-size:100%;
+						font-weight:bold;
+						background: #525D76;
+						color: white;
+						text-decoration: none;
+						padding: 5px;
+						margin-right: 2px;
+						margin-left: 2px;
+						margin-bottom: 0;
+					}
+
+					th.severity {
+						width: 75px;
+					}
+					th.line {
+						width: 75px;
+					}
+					td.error {
+						background-color: #ffbbbb;
+					}
+					td.warning {
+						background-color: #ffeebb;
 					}
 				</style>
 			</head>
 			<body>
 				<a name="top"></a>
-				<!-- jakarta logo -->
-				<table border="0" cellpadding="0" cellspacing="0" width="100%">
-					<tr>
-						<td class="bannercell" rowspan="2">
-							<!--a href="http://jakarta.apache.org/">
-							  <img src="http://jakarta.apache.org/images/jakarta-logo.gif" alt="http://jakarta.apache.org" align="left" border="0"/>
-							  </a-->
-						</td>
-						<td class="text-align:right"><h2>CheckStyle Audit</h2></td>
-					</tr>
-					<tr>
-						<td class="text-align:right">Designed for use with <a href='http://checkstyle.sourceforge.net/'>CheckStyle</a> and <a href='http://jakarta.apache.org'>Ant</a>.</td>
-					</tr>
-				</table>
+				<div class="header">
+					<h1>CheckStyle Audit</h1>
+				</div>
 				<hr size="1"/>
 
 				<!-- Summary part -->
@@ -100,7 +102,6 @@
 				<xsl:apply-templates select="file[@name and generate-id(.) = generate-id(key('files', @name))]" />
 
 				<hr size="1" width="100%" align="left"/>
-
 
 			</body>
 		</html>
@@ -134,13 +135,15 @@
 
 		<table class="log" border="0" cellpadding="5" cellspacing="2" width="100%">
 			<tr>
-				<th>Error Description</th>
-				<th>Line</th>
+				<th class="severity">Severity</th>
+				<th class="description">Error Description</th>
+				<th class="line">Line</th>
 			</tr>
 			<xsl:for-each select="key('files', @name)/error">
 				<xsl:sort data-type="number" order="ascending" select="@line"/>
-				<tr>
+				<tr title="{@source}">
 					<xsl:call-template name="alternated-row"/>
+					<td class="{@severity}"><xsl:value-of select="@severity"/></td>
 					<td><xsl:value-of select="@message"/></td>
 					<td><xsl:value-of select="@line"/></td>
 				</tr>
