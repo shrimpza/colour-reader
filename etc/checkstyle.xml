@@ -75,8 +75,12 @@
 		</module>
 		<module name="JavadocVariable">
 			<property name="scope" value="protected"/>
+			<!-- ignore public constants -->
+			<property name="ignoreNamePattern" value="[A-Z_]+"/>
 		</module>
-		<module name="JavadocStyle"/>
+		<module name="JavadocStyle">
+			<property name="severity" value="warning"/>
+		</module>
 
 
 		<!-- Checks for Naming Conventions.                  -->
@@ -177,7 +181,11 @@
 		<!-- See http://checkstyle.sf.net/config_misc.html -->
 		<module name="ArrayTypeStyle"/>
 		<!--<module name="FinalParameters"/>-->
-		<module name="TodoComment"/>
+		<module name="TodoComment">
+			<property name="format" value="(?i)TODO|REVIEW"/>
+			<message key="todo.match" value="Outstanding TODO"/>
+			<property name="severity" value="info"/>
+		</module>
 		<module name="UpperEll"/>
 
 	</module>

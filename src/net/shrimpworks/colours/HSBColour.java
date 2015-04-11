@@ -9,6 +9,8 @@ import java.util.Objects;
  */
 public class HSBColour {
 
+	private static final float EQUALS_FLOAT_VARIANCE = 0.00001f;
+
 	private final float hue;
 	private final float saturation;
 	private final float brightness;
@@ -44,9 +46,9 @@ public class HSBColour {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		HSBColour colour = (HSBColour)o;
-		return Math.abs(hue - colour.hue) < 0.00001 &&
-			   Math.abs(saturation - colour.saturation) < 0.00001 &&
-			   Math.abs(brightness - colour.brightness) < 0.00001;
+		return Math.abs(hue - colour.hue) < EQUALS_FLOAT_VARIANCE
+			   && Math.abs(saturation - colour.saturation) < EQUALS_FLOAT_VARIANCE
+			   && Math.abs(brightness - colour.brightness) < EQUALS_FLOAT_VARIANCE;
 	}
 
 	@Override

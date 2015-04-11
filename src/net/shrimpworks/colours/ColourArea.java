@@ -8,6 +8,8 @@ import java.util.Objects;
  */
 public class ColourArea implements Comparable<ColourArea> {
 
+	private static final float EQUALS_FLOAT_VARIANCE = 0.00001f;
+
 	private final HSBColour colour;
 	private final float area;
 
@@ -35,7 +37,7 @@ public class ColourArea implements Comparable<ColourArea> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		ColourArea that = (ColourArea)o;
-		return Math.abs(area - that.area) < 0.00001
+		return Math.abs(area - that.area) < EQUALS_FLOAT_VARIANCE
 			   && Objects.equals(colour, that.colour);
 	}
 
