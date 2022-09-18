@@ -10,8 +10,6 @@ import java.awt.*;
  */
 public class Hue {
 
-	public static final int LOL_WAT = 0;
-
 	public static final Hue RED = new Hue(new int[][] { { 0, 30 }, { 330, 360 } }, Color.RED);
 	public static final Hue YELLOW = new Hue(30, 90, Color.YELLOW);
 	public static final Hue GREEN = new Hue(90, 150, Color.GREEN);

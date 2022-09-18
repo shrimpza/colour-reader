@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ColourReaderTest {
 
@@ -145,16 +145,16 @@ public class ColourReaderTest {
 		assertArrayEquals(getHSB(Color.BLUE), colours.stream().filter(c -> c.volume() == 0.5f).findFirst().get().colour().hsb(), 0.0001f);
 	}
 
-	@Ignore
+	@Disabled
 	@Test
 	public void sandbox() throws IOException {
 		BufferedImage img = ImageIO.read(new File("/tmp/image.jpg"));
 		List<ColourArea> volumes = new ColourReader()
-				.withResolution(0.5f)
-				.withBlackThreshold(0.4f)
-				.withWhiteThreshold(0.4f)
-				.withHues(Arrays.asList(Hue.BASE))
-				.colourArea(img);
+			.withResolution(0.5f)
+			.withBlackThreshold(0.4f)
+			.withWhiteThreshold(0.4f)
+			.withHues(Arrays.asList(Hue.BASE))
+			.colourArea(img);
 
 		List<Color> colors = volumes.stream().map(v -> Color.HSBtoRGB(v.colour().hue(), v.colour().saturation(), v.colour().brightness()))
 									.map(Color::new).collect(Collectors.toList());

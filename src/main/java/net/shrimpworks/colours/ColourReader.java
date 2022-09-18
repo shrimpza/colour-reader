@@ -105,7 +105,7 @@ public class ColourReader {
 	 * For example, a value of 0.2 would cause many bright shades, regardless
 	 * of colour, to be considered white.
 	 *
-	 * @param whiteThreshold custom whitness threshold in range 0.0 to 1.0
+	 * @param whiteThreshold custom whiteness threshold in range 0.0 to 1.0
 	 * @return new Colour Reader instance
 	 */
 	public ColourReader withWhiteThreshold(float whiteThreshold) {
@@ -129,7 +129,7 @@ public class ColourReader {
 
 		final int[] totalRGB = new int[] { 0, 0, 0 };
 
-		samples.stream().forEach(rgb -> {
+		samples.forEach(rgb -> {
 			totalRGB[0] += (rgb >> 16) & 0xFF;
 			totalRGB[1] += (rgb >> 8) & 0xFF;
 			totalRGB[2] += (rgb) & 0xFF;
@@ -143,12 +143,12 @@ public class ColourReader {
 	/**
 	 * Determine the colour composition of an image.
 	 * <p>
-	 * A sorted collection of Colour Volumes are returned, each containing
+	 * A sorted collection of Colour Area are returned, each containing
 	 * an averaged colour and the percentage (on scale of 0 to 1) of the
 	 * image that colour occupies.
 	 * <p>
 	 * White and black thresholds are used to "trim" certain tones, and
-	 * a collection of hues (see {@link #withHues(Collection)}
+	 * a collection of hues (see {@link #withHues(Collection)})
 	 * are used to determine colour groupings.
 	 *
 	 * @param image image to analyse
@@ -159,7 +159,7 @@ public class ColourReader {
 
 		final Map<Color, List<HSBColour>> colorList = new HashMap<>();
 
-		samples.stream().forEach(rgb -> {
+		samples.forEach(rgb -> {
 			HSBColour hsb = new HSBColour(Color.RGBtoHSB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, (rgb) & 0xFF, null));
 			Color color = null;
 
